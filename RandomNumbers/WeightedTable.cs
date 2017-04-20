@@ -118,7 +118,7 @@ namespace RandomNumbers
 
         public override string ToString()
         {
-            return $"WeightedTable ({_TableList.Count}) items)";
+            return $"WeightedTable ({_TableList.Count} items))";
         }
     }
 }
