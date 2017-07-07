@@ -1,18 +1,16 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
+﻿using NUnit.Framework;
 using RandomNumbers;
 
 namespace RandomNumbersTests
 {
-    [TestClass]
+    [TestFixture]
     public class WeightedTable
     {
-        [TestMethod]
-        [TestCategory("RandomGenerator")]
+        [Test]
+        [Category("RandomNumbers")]
         public void WeightedTableAddAndRemove()
         {
-            string[] items = new string[] { "Item 1","Item 2","Item 3","Item 4" };
+            string[] items = new string[] { "Item 1", "Item 2", "Item 3", "Item 4" };
 
             var t1 = new WeightedTable<string>();
 
@@ -33,7 +31,6 @@ namespace RandomNumbersTests
                 t1.SelectRandomItem(true);
                 count++;
             }
-
 
             Assert.IsTrue(count == items.Length);
         }

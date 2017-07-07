@@ -1,16 +1,16 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using NUnit.Framework;
 using RandomNumbers;
 
 namespace RandomNumbersTests
 {
-    [TestClass]
+    [TestFixture]
     public class GenerateRandomTests
     {
-        [TestMethod]
-        [TestCategory("RandomGenerator")]
-        public void GenerateRandInt ()
+        [Test]
+        [Category("RandomNumbers")]
+        public void GenerateRandInt()
         {
             var random = new RandomGenerator();
 
@@ -20,7 +20,7 @@ namespace RandomNumbersTests
 
             for (int i = 0; i < 3000; i++)
             {
-                buffer = random.Int(1,101);
+                buffer = random.Int(1, 101);
 
                 if (buffer < min_value)
                     min_value = buffer;
@@ -29,27 +29,29 @@ namespace RandomNumbersTests
                     max_value = buffer;
             }
 
-            Assert.IsTrue(max_value ==  101);
-            Assert.IsTrue(min_value ==  1);
+            Assert.IsTrue(max_value == 101);
+            Assert.IsTrue(min_value == 1);
         }
 
-        [TestMethod]
-        [TestCategory("RandomGenerator")]
+        [Test]
+        [Category("RandomNumbers")]
         public void GenerateRandColor()
         {
             var random = new RandomGenerator();
 
             string buffer = random.ColorString();
             Assert.IsTrue(buffer.Length == 7);
+
+            Console.Write(buffer);
         }
 
-        [TestMethod]
-        [TestCategory("RandomGenerator")]
+        [Test]
+        [Category("RandomNumbers")]
         public void GenerateRandColorTint()
         {
             var random = new RandomGenerator();
 
-            string buffer = random.ColorString(0.7f,0f,0f,0.25f);
+            string buffer = random.ColorString(0.7f, 0f, 0f, 0.25f);
             Assert.IsTrue(buffer.Length == 7);
         }
     }
