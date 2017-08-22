@@ -43,6 +43,7 @@ namespace RandomNumbers
         int NormallyDistributedInt(int lower_bound, int upper_bound, int rolls);
         T Object<T>() where T : class, new();
         DateTime RandomDateTime();
+        Tuple<float, float> RandomPointInACircle(float x, float y, float radius);
         string Sentence(int max_string_length);
         short Short();
         short Short(short max);

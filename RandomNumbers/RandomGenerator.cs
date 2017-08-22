@@ -6,7 +6,7 @@ using System.Text;
 
 namespace RandomNumbers
 {
-    public partial class RandomGenerator : IRandomGenerator
+    public class RandomGenerator : IRandomGenerator
     {
         public const string ASCII_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         private static Random _Random = new Random();
@@ -101,6 +101,9 @@ namespace RandomNumbers
             return output;
         }
 
+        /// <summary>
+        /// Returns a random value between 0 and 1, inclusive.
+        /// </summary>
         public float Float()
         {
             return (float)_Random.NextDouble();
@@ -250,6 +253,29 @@ namespace RandomNumbers
         public float Facing()
         {
             return (float)Double(0, ((2 * Math.PI - float.Epsilon)));
+        }
+
+        public Tuple<float, float> RandomPointInACircle(float x, float y, float radius)
+        {
+            if (radius < float.Epsilon)
+                throw new ArgumentOutOfRangeException("Radius must be greater than zero");
+
+            var output = new Tuple<float, float>(0, 0);
+
+            float a = Float();
+            float b = Float();
+
+            if (b < a)
+            {
+                float c = b;
+                b = a;
+                a = c;
+            }
+
+            x += (float)(b * radius * Math.Cos(Math.PI * 2 * (a / b)));
+            y += (float)(b * radius * Math.Sin(Math.PI * 2 * (a / b)));
+
+            return output = new Tuple<float, float>(x, y);
         }
 
         #endregion
