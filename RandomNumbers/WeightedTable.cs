@@ -74,7 +74,7 @@ namespace RandomNumbers
             _Sorted = false;
         }
 
-        public T SelectRandomItem(bool remove_selected_item)
+        public T SelectRandomItem(bool removeSelectedItem)
         {
             if (_TableList.Count < 1)
                 throw new Exception("Table is empty, populate table before selecting value");
@@ -107,7 +107,7 @@ namespace RandomNumbers
 
             KeyValuePair<T, float> selected_item = _TableList[selected_index];
 
-            if (remove_selected_item)
+            if (removeSelectedItem)
             {
                 _TableList.RemoveAt(selected_index);
                 _TotalWeight -= selected_item.Value;
