@@ -27,9 +27,7 @@ namespace RandomNumbers
 
         public byte Byte()
         {
-            Byte[] output = new byte[sizeof(byte)];
-            _Random.NextBytes(output);
-            return output[0];
+            return (byte)Int(0, byte.MaxValue);
         }
 
         public byte Byte(byte max)
@@ -40,6 +38,16 @@ namespace RandomNumbers
         public byte Byte(byte min, byte max)
         {
             return (byte)Int(min, max);
+        }
+
+        public byte[] ByteArray(int count)
+        {
+            if (count < 1)
+                throw new ArgumentException($"Cannot generate {count} bytes, it is less than 1");
+
+            byte[] output = new byte[count];
+            _Random.NextBytes(output);
+            return output;
         }
 
         public char Char()

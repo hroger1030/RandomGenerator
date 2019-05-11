@@ -37,7 +37,7 @@ namespace RandomNumbers
             var provider = new RNGCryptoServiceProvider();
             int n = list.Count;
             T value;
-             
+
             while (n > 1)
             {
                 byte[] box = new byte[1];

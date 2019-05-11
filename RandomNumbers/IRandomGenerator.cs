@@ -6,9 +6,12 @@ namespace RandomNumbers
     public interface IRandomGenerator
     {
         bool Bool();
+
         byte Byte();
         byte Byte(byte max);
         byte Byte(byte min, byte max);
+        byte[] ByteArray(int count);
+
         char Char();
         char Char(char max);
         char Char(char min, char max);
