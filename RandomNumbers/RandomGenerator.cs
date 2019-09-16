@@ -263,15 +263,16 @@ namespace RandomNumbers
             return (float)Double(0, ((2 * Math.PI - float.Epsilon)));
         }
 
-        public Tuple<float, float> RandomPointInACircle(float x, float y, float radius)
+        // TODO: this method could use some tlc
+        // seperate unit circle from scaled and positioned circle
+        public Tuple<float, float> RandomPointInUnitCircle(float x, float y, float radius)
         {
-            if (radius < float.Epsilon)
+            if (radius <= 0f)
                 throw new ArgumentOutOfRangeException("Radius must be greater than zero");
 
-            var output = new Tuple<float, float>(0, 0);
-
-            float a = Float();
-            float b = Float();
+            // generate two values between 0 and 1
+            float a = Float(-1, 1);
+            float b = Float(-1, 1);
 
             if (b < a)
             {
@@ -280,10 +281,11 @@ namespace RandomNumbers
                 a = c;
             }
 
+            // map them to a unit circle
             x += (float)(b * radius * Math.Cos(Math.PI * 2 * (a / b)));
             y += (float)(b * radius * Math.Sin(Math.PI * 2 * (a / b)));
 
-            return output = new Tuple<float, float>(x, y);
+            return new Tuple<float, float>(x, y);
         }
 
         #endregion
@@ -312,29 +314,29 @@ namespace RandomNumbers
             return String(length, ASCII_ALPHABET);
         }
 
-        public string String(int min_length, int max_length)
+        public string String(int minLength, int maxLength)
         {
-            int length = Int(min_length, max_length);
+            int length = Int(minLength, maxLength);
             return String(length, ASCII_ALPHABET);
         }
 
-        public string String(int length, string character_set)
+        public string String(int length, string characterSet)
         {
             char[] output = new char[length];
 
             for (int i = 0; i < length; i++)
-                output[i] = character_set[Int(character_set.Length - 1)];
+                output[i] = characterSet[Int(characterSet.Length - 1)];
 
             return new string(output);
         }
 
-        public string Sentence(int max_string_length)
+        public string Sentence(int maxStringLength)
         {
-            if (max_string_length < 1)
+            if (maxStringLength < 1)
                 throw new ArgumentException("Max string length cannot be less than 2");
 
-            var output = new StringBuilder(max_string_length);
-            int remaining_characters = max_string_length;
+            var output = new StringBuilder(maxStringLength);
+            int remaining_characters = maxStringLength;
             string buffer;
 
             while (remaining_characters > 10)
@@ -568,25 +570,25 @@ namespace RandomNumbers
         /// <summary>
         /// Generates a random value between 0 and the upper bound that is distributed normally.
         /// </summary>
-        /// <param name="upper_bound">inclusive highest value</param>
+        /// <param name="upperBound">inclusive highest value</param>
         /// <param name="rolls">the number of normally distributed random factors that contribute
         /// to the final value. Greater values will push the average towards the mean.</param>
-        public double NormallyDistributedDouble(double upper_bound, int rolls)
+        public double NormallyDistributedDouble(double upperBound, int rolls)
         {
-            return NormallyDistributedDouble(0, upper_bound, rolls);
+            return NormallyDistributedDouble(0, upperBound, rolls);
         }
 
         /// <summary>
         /// Generates a random value in the specified range that is distributed normally.
         /// </summary>
-        /// <param name="lower_bound">inclusive lowest value</param>
-        /// <param name="upper_bound">inclusive highest value</param>
+        /// <param name="lowerBound">inclusive lowest value</param>
+        /// <param name="upperBound">inclusive highest value</param>
         /// <param name="rolls">the number of normally distruibuted random factors that contribute
         /// to the final value. Greater values will push the average towards the mean.</param>
-        public double NormallyDistributedDouble(double lower_bound, double upper_bound, int rolls)
+        public double NormallyDistributedDouble(double lowerBound, double upperBound, int rolls)
         {
-            double lower_roll_bound = lower_bound / rolls;
-            double upper_roll_bound = upper_bound / rolls;
+            double lower_roll_bound = lowerBound / rolls;
+            double upper_roll_bound = upperBound / rolls;
             double sum = 0.0;
 
             while (rolls > 0)
@@ -601,47 +603,47 @@ namespace RandomNumbers
         /// <summary>
         /// Generates a random value between 0 and the upper bound that is distributed normally.
         /// </summary>
-        /// <param name="upper_bound">inclusive highest value</param>
+        /// <param name="upperBound">inclusive highest value</param>
         /// <param name="rolls">the number of normally distruibuted random factors that contribute
         /// to the final value. Greater values will push the average towards the mean.</param>
-        public float NormallyDistributedFloat(float upper_bound, int rolls)
+        public float NormallyDistributedFloat(float upperBound, int rolls)
         {
-            return NormallyDistributedFloat(0f, upper_bound, rolls);
+            return NormallyDistributedFloat(0f, upperBound, rolls);
         }
 
         /// <summary>
         /// Generates a random value in the specified range that is distributed normally.
         /// </summary>
-        /// <param name="lower_bound">inclusive lowest value</param>
-        /// <param name="upper_bound">inclusive highest value</param>
+        /// <param name="lowerBound">inclusive lowest value</param>
+        /// <param name="upperBound">inclusive highest value</param>
         /// <param name="rolls">the number of normally distruibuted random factors that contribute
         /// to the final value. Greater values will push the average towards the mean.</param>
-        public float NormallyDistributedFloat(float lower_bound, float upper_bound, int rolls)
+        public float NormallyDistributedFloat(float lowerBound, float upperBound, int rolls)
         {
-            return (float)NormallyDistributedDouble(lower_bound, upper_bound, rolls);
+            return (float)NormallyDistributedDouble(lowerBound, upperBound, rolls);
         }
 
         /// <summary>
         /// Generates a random value between 0 and the upper bound that is distributed normally.
         /// </summary>
-        /// <param name="upper_bound">inclusive highest value</param>
+        /// <param name="upperBound">inclusive highest value</param>
         /// <param name="rolls">the number of normally distruibuted random factors that contribute
         /// to the final value. Greater values will push the average towards the mean.</param>
-        public int NormallyDistributedInt(int upper_bound, int rolls)
+        public int NormallyDistributedInt(int upperBound, int rolls)
         {
-            return NormallyDistributedInt(0, upper_bound, rolls);
+            return NormallyDistributedInt(0, upperBound, rolls);
         }
 
         /// <summary>
         /// Generates a random value in the specified range that is distributed normally.
         /// </summary>
-        /// <param name="lower_bound">inclusive lowest value</param>
-        /// <param name="upper_bound">inclusive highest value</param>
+        /// <param name="lowerBound">inclusive lowest value</param>
+        /// <param name="upperBound">inclusive highest value</param>
         /// <param name="rolls">the number of normally distruibuted random factors that contribute
         /// to the final value. Greater values will push the average towards the mean.</param>
-        public int NormallyDistributedInt(int lower_bound, int upper_bound, int rolls)
+        public int NormallyDistributedInt(int lowerBound, int upperBound, int rolls)
         {
-            return (int)NormallyDistributedDouble(lower_bound, upper_bound, rolls);
+            return (int)NormallyDistributedDouble(lowerBound, upperBound, rolls);
         }
 
         /// <summary>
@@ -679,20 +681,20 @@ namespace RandomNumbers
         /// Generates a random number between 0.0 and 1.0 that is exponentially biased 
         /// towards 0.0 using a base X Logarithm.
         /// </summary>
-        /// <param name="log_base">base of log to use for computation. Value must be
+        /// <param name="logBase">base of log to use for computation. Value must be
         /// greater than 0. The larger the base, the more probably values close to
         /// 0 will be generated.</param>
-        public double ExponentiallyDistributedDouble(double log_base)
+        public double ExponentiallyDistributedDouble(double logBase)
         {
-            if (log_base < double.Epsilon)
+            if (logBase < double.Epsilon)
                 throw new ArgumentException("Log base must be greater than double.Epsilon");
 
             // generate a random number between 1 and X inclusive
             // we use logX, so logX(1) = 0, logX(X) = 1
-            double random_number = (_Random.NextDouble() * (log_base - 1)) + 1;
+            double random_number = (_Random.NextDouble() * (logBase - 1)) + 1;
 
             // get log of random value using specified base.
-            double output = Math.Log(random_number, log_base);
+            double output = Math.Log(random_number, logBase);
 
             // return inverted value.
             return 1.0 - output;
@@ -702,12 +704,12 @@ namespace RandomNumbers
         /// Generates a random number between 0.0 and 1.0 that is exponentially biased 
         /// towards 0.0 using a base X Logarithm.
         /// </summary>
-        /// <param name="log_base">base of log to use for computation. Value must be
+        /// <param name="logBase">base of log to use for computation. Value must be
         /// greater than 0. The larger the base, the more probably values close to
         /// 0 will be generated.</param>
         /// <param name="min">The lower bound of the range, inclusive</param>
         /// <param name="max">The upper bound of the range, inclusive</param> 
-        public double ExponentiallyDistributedDouble(double log_base, double min, double max)
+        public double ExponentiallyDistributedDouble(double logBase, double min, double max)
         {
             if (min > max)
                 throw new ArgumentException("Minimum value is greater than maximum value");

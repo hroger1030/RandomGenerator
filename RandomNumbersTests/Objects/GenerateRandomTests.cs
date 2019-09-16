@@ -8,9 +8,8 @@ namespace RandomNumbersTests
     [TestFixture]
     public class GenerateRandomTests
     {
-        private int NUMBER_OF_TESTS = 10000;
-
-        RandomGenerator _Rand = new RandomGenerator();
+        private readonly int NUMBER_OF_TESTS = 10000;
+        private readonly RandomGenerator _Rand = new RandomGenerator();
 
         [Test]
         [Category("Int")]
@@ -168,7 +167,7 @@ namespace RandomNumbersTests
         {
             for (int i = 0; i < NUMBER_OF_TESTS; i++)
             {
-                var output = _Rand.RandomPointInACircle(0, 0, 1);
+                var output = _Rand.RandomPointInUnitCircle(0, 0, 1);
 
                 // test: x^2 + y^2 <= 1
                 float test_value = (output.Item1 * output.Item1) + (output.Item2 * output.Item2);
