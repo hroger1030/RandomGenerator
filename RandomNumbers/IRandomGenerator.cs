@@ -26,7 +26,7 @@ namespace RandomNumbers
         double Double();
         double Double(double max);
         double Double(double min, double max);
-        double Double(int rolls, double min, double max);
+        double DoubleUnitIterval();
 
         T EnumValue<T>() where T : struct, IConvertible;
 
@@ -39,7 +39,7 @@ namespace RandomNumbers
         float Float();
         float Float(float max);
         float Float(float min, float max);
-        float Float(int rolls, float min, float max);
+        float FloatUnitIterval();
 
         int Int();
         int Int(int max);

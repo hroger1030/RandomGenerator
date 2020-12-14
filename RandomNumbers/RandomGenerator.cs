@@ -65,6 +65,9 @@ namespace RandomNumbers
             return (char)Int(min, max);
         }
 
+         /// <summary>
+        /// Returns a random value between 0 and 1, exclusive.
+        /// </summary>
         public double Double()
         {
             byte[] buffer = new byte[sizeof(double)];
@@ -75,7 +78,7 @@ namespace RandomNumbers
         /// <summary>
         /// Returns a random value between 0 and max parameters, inclusive.
         /// </summary>
-        /// <param name="max">The upper bound of the range, inclusive</param>
+        /// <param name="max">The upper bound of the range, exclusive</param>
         public double Double(double max)
         {
             return _Random.NextDouble() * max;
@@ -85,32 +88,22 @@ namespace RandomNumbers
         /// Returns a random value between min and max parameters, inclusive.
         /// </summary>
         /// <param name="min">The lower bound of the range, inclusive</param>
-        /// <param name="max">The upper bound of the range, inclusive</param>
+        /// <param name="max">The upper bound of the range, exclusive</param>
         public double Double(double min, double max)
         {
             return (_Random.NextDouble() * (max - min)) + min;
         }
 
         /// <summary>
-        /// Returns a random value between min and max parameters, inclusive.
+        /// Returns a random value between 0 and 1, inclusive.
         /// </summary>
-        /// <param name="rolls">The number of summed rolls</param>
-        /// <param name="min">The lower bound of the range, inclusive</param>
-        /// <param name="max">The upper bound of the range, inclusive</param>
-        public double Double(int rolls, double min, double max)
+        public double DoubleUnitIterval()
         {
-            double output = 0;
-
-            for (int i = 0; i < rolls; i++)
-            {
-                output += Double(min, max);
-            }
-
-            return output;
+            return _Random.Next(0, 1000000001) / 1000000000d;
         }
 
         /// <summary>
-        /// Returns a random value between 0 and 1, inclusive.
+        /// Returns a random value between 0 and 1, exclusive.
         /// </summary>
         public float Float()
         {
@@ -118,40 +111,30 @@ namespace RandomNumbers
         }
 
         /// <summary>
-        /// Returns a random value between 0 and max parameters, inclusive.
+        /// Returns a random value between 0 and max parameters, exclusive.
         /// </summary>
-        /// <param name="max">The upper bound of the range, inclusive</param>
+        /// <param name="max">The upper bound of the range, exclusive</param>
         public float Float(float max)
         {
-            return (float)(_Random.NextDouble() * (max + double.Epsilon));
+            return (float)(_Random.NextDouble() * max);
         }
 
         /// <summary>
-        /// Returns a random value between min and max parameters, inclusive.
+        /// Returns a random value between min and max parameters, exclusive.
         /// </summary>
         /// <param name="min">The lower bound of the range, inclusive</param>
-        /// <param name="max">The upper bound of the range, inclusive</param>
+        /// <param name="max">The upper bound of the range, exclusive</param>
         public float Float(float min, float max)
         {
             return (float)((_Random.NextDouble() * (max - min)) + min);
         }
 
         /// <summary>
-        /// Returns a random value between min and max parameters, inclusive.
+        /// Returns a random value between 0 and 1, inclusive.
         /// </summary>
-        /// <param name="rolls">The number of summed rolls</param>
-        /// <param name="min">The lower bound of the range, inclusive</param>
-        /// <param name="max">The upper bound of the range, inclusive</param>
-        public float Float(int rolls, float min, float max)
+        public float FloatUnitIterval()
         {
-            float output = 0;
-
-            for (int i = 0; i < rolls; i++)
-            {
-                output += Float(min, max);
-            }
-
-            return output;
+            return _Random.Next(0, 1000000001) / 1000000000f;
         }
 
         /// <summary>
