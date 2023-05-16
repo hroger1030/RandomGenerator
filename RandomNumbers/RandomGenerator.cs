@@ -31,6 +31,12 @@ namespace RandomNumbers
 
         public RandomGenerator() { }
 
+
+        /// <summary>
+        /// This constructor exists for testing purposes. Passing a
+        /// number in here will ensure that you get the same set of
+        /// reandom numbers each time it is initialized.
+        /// </summary>
         public RandomGenerator(int seed)
         {
             _Random = new Random(seed);
@@ -750,7 +756,7 @@ namespace RandomNumbers
             }
 
             long ticks = Long(min.Ticks, max.Ticks);
-            return new DateTime(ticks, DateTimeKind.Utc);
+            return new DateTime(ticks, DateTimeKind.Local);
         }
 
         #endregion
