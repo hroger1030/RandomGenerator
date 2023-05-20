@@ -27,10 +27,9 @@ namespace RandomNumbers
     public class RandomGenerator : IRandomGenerator
     {
         public const string ASCII_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        private static Random _Random = new Random();
+        private static Random _Random = new();
 
         public RandomGenerator() { }
-
 
         /// <summary>
         /// This constructor exists for testing purposes. Passing a

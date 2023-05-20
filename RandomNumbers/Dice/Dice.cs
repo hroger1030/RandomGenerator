@@ -20,13 +20,13 @@ using System;
 
 namespace RandomNumbers.Dice
 {
-    public class Die
+    public class Dice
     {
-        private static Random _Random = new Random();
+        private static Random _Random = new();
 
-        public Die() { }
+        public Dice() { }
 
-        public Die(int seed)
+        public Dice(int seed)
         {
             _Random = new Random(seed);
         }
