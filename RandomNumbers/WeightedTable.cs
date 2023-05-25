@@ -92,7 +92,7 @@ namespace RandomNumbers
             _Sorted = false;
         }
 
-        public T SelectRandomItem(bool removeSelectedItem)
+        public T SelectRandomItem(bool removeSelectedItem = false)
         {
             if (_TableList.Count < 1)
                 throw new Exception("Table is empty, populate table before selecting value");
