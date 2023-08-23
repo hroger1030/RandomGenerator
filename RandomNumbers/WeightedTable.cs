@@ -16,9 +16,11 @@ FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TOR
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using RandomNumbers.Dice;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace RandomNumbers
 {
@@ -97,11 +99,7 @@ namespace RandomNumbers
             if (_TableList.Count < 1)
                 throw new Exception("Table is empty, populate table before selecting value");
 
-            if (!_Sorted)
-            {
-                _TableList = _TableList.OrderByDescending(i => i.Value).ToList();
-                _Sorted = true;
-            }
+            SortTable();
 
             int selected_index = -1;
             float random_roll = (float)_Random.NextDouble() * _TotalWeight;
@@ -134,9 +132,64 @@ namespace RandomNumbers
             return selected_item.Key;
         }
 
+        /// <summary>
+        /// Converts the table to a percentile table.
+        /// </summary>
+        public List<KeyValuePair<string,string>> ConvertToPercentileTable(eDiceType tableScale)
+        {
+            SortTable();
+
+            var output = new List<KeyValuePair<string, string>>();
+            int lowerBound = 1;
+            int upperBound; 
+            string range;
+
+            // check total count against table scale.
+            // fail if table is too large to convert to tableScale.
+
+            foreach (var kvp in _TableList)
+            {
+                var currentDelta = kvp.Value / _TotalWeight * (int)tableScale;
+                var roundedDelta = Math.Max((int)Math.Round(currentDelta, 0), 1);
+
+                upperBound = lowerBound + roundedDelta - 1;
+
+                //check to see if we have excceded the upper bound of the table
+                if (lowerBound > (int)tableScale)
+                    throw new ArgumentOutOfRangeException($"Table is too large to convert to a {tableScale} table");
+
+                if (lowerBound >= upperBound)
+                    range = $"{lowerBound}";
+                else
+                    range = $"{lowerBound} - {upperBound}";
+
+                var newKvp = new KeyValuePair<string, string>(range, kvp.Key.ToString() + $" raw({currentDelta})" );
+                output.Add(newKvp);
+                lowerBound += roundedDelta;
+            }
+
+            return output;
+        }
+
+        public void SortTable()
+        {
+            if (!_Sorted)
+            {
+                _TableList = _TableList.OrderByDescending(i => i.Value).ToList();
+                _Sorted = true;
+            }
+        }
+
         public override string ToString()
         {
-            return $"WeightedTable ({_TableList.Count} items))";
+            var sb = new StringBuilder();
+
+            sb.AppendLine($"WeightedTable Content ({_TableList.Count} items)");
+
+            foreach (var kvp in _TableList)
+                sb.AppendLine($"Value: {kvp.Key}, Weight: {kvp.Value}");
+
+            return sb.ToString();
         }
     }
 }

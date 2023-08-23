@@ -31,5 +31,6 @@ namespace RandomNumbers.Dice
         D30     = 30,
         D100    = 100,
         D1000   = 1000,
+        D10000  = 10000,
     }
 }
