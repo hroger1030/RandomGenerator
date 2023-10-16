@@ -36,7 +36,8 @@ namespace RandomNumbers
 
         T CollectionValue<T>(IList<T> collection, bool remove);
 
-        string ColorString();
+        string RGBColorString();
+        string RGBAColorString();
         string ColorString(float red, float green, float blue, float variance);
 
         V DictionaryValue<K, V>(IDictionary<K, V> dictionary, bool remove);
@@ -44,7 +45,6 @@ namespace RandomNumbers
         double Double();
         double Double(double max);
         double Double(double min, double max);
-        double DoubleUnitIterval();
 
         T EnumValue<T>() where T : struct, IConvertible;
 
@@ -57,7 +57,6 @@ namespace RandomNumbers
         float Float();
         float Float(float max);
         float Float(float min, float max);
-        float FloatUnitIterval();
 
         int Int();
         int Int(int max);
@@ -79,8 +78,6 @@ namespace RandomNumbers
 
         DateTime RandomDateTime();
 
-        Tuple<float, float> RandomPointInUnitCircle(float x, float y, float radius);
-
         string Sentence(int max_string_length);
 
         short Short();
@@ -94,9 +91,9 @@ namespace RandomNumbers
         ulong ULong();
 
         string UnicodeString(int length);
+
         double UniformDistributedDouble(double peak, double scale);
 
-        double UnitDouble();
-        float UnitFloat();
+        double UnitInterval();
     }
 }

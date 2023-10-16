@@ -18,6 +18,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -26,7 +27,9 @@ namespace RandomNumbers
 {
     public class RandomGenerator : IRandomGenerator
     {
-        public const string ASCII_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        private const int _Precision = 1000000000;
+        private const string ASCII_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
         private static Random _Random = new();
 
         public RandomGenerator() { }
@@ -88,7 +91,7 @@ namespace RandomNumbers
             return (char)Int(min, max);
         }
 
-         /// <summary>
+        /// <summary>
         /// Returns a random value between 0 and 1, exclusive.
         /// </summary>
         public double Double()
@@ -118,14 +121,6 @@ namespace RandomNumbers
         }
 
         /// <summary>
-        /// Returns a random value between 0 and 1, inclusive.
-        /// </summary>
-        public double DoubleUnitIterval()
-        {
-            return _Random.Next(0, 1000000001) / 1000000000d;
-        }
-
-        /// <summary>
         /// Returns a random value between 0 and 1, exclusive.
         /// </summary>
         public float Float()
@@ -150,14 +145,6 @@ namespace RandomNumbers
         public float Float(float min, float max)
         {
             return (float)((_Random.NextDouble() * (max - min)) + min);
-        }
-
-        /// <summary>
-        /// Returns a random value between 0 and 1, inclusive.
-        /// </summary>
-        public float FloatUnitIterval()
-        {
-            return _Random.Next(0, 1000000001) / 1000000000f;
         }
 
         /// <summary>
@@ -239,26 +226,14 @@ namespace RandomNumbers
 
         #endregion
 
-        #region geometry
+        #region math & geometry
 
         /// <summary>
         /// Returns a random value between 0 and 1, inclusive
         /// </summary>
-        /// <param name="min">The lower bound of the range, inclusive</param>
-        /// <param name="max">The upper bound of the range, inclusive</param>
-        public double UnitDouble()
+        public double UnitInterval()
         {
-            return _Random.NextDouble();
-        }
-
-        /// <summary>
-        /// Returns a random value between 0 and 1, inclusive
-        /// </summary>
-        /// <param name="min">The lower bound of the range, inclusive</param>
-        /// <param name="max">The upper bound of the range, inclusive</param>
-        public float UnitFloat()
-        {
-            return (float)_Random.NextDouble();
+            return (_Random.Next(0, _Precision + 1)) / ((double)_Precision);
         }
 
         /// <summary>
@@ -267,31 +242,6 @@ namespace RandomNumbers
         public float Facing()
         {
             return (float)Double(0, ((2 * Math.PI - float.Epsilon)));
-        }
-
-        // TODO: this method could use some tlc
-        // seperate unit circle from scaled and positioned circle
-        public Tuple<float, float> RandomPointInUnitCircle(float x, float y, float radius)
-        {
-            if (radius <= 0f)
-                throw new ArgumentOutOfRangeException("Radius must be greater than zero");
-
-            // generate two values between 0 and 1
-            float a = Float(-1, 1);
-            float b = Float(-1, 1);
-
-            if (b < a)
-            {
-                float c = b;
-                b = a;
-                a = c;
-            }
-
-            // map them to a unit circle
-            x += (float)(b * radius * Math.Cos(Math.PI * 2 * (a / b)));
-            y += (float)(b * radius * Math.Sin(Math.PI * 2 * (a / b)));
-
-            return new Tuple<float, float>(x, y);
         }
 
         #endregion
@@ -361,7 +311,7 @@ namespace RandomNumbers
         /// <summary>
         /// Generates a completely random RGB color string (ex: "#ff7700") 
         /// </summary>
-        public string ColorString()
+        public string RGBColorString()
         {
             byte r = Byte();
             byte g = Byte();
@@ -371,10 +321,22 @@ namespace RandomNumbers
         }
 
         /// <summary>
+        /// Generates a completely random RGBA color string (ex: "#ff770077") 
+        /// </summary>
+        public string RGBAColorString()
+        {
+            byte r = Byte();
+            byte g = Byte();
+            byte b = Byte();
+            byte a = Byte();
+
+            return string.Format("#{0:X2}{1:X2}{2:X2}{3:X2}", r, g, b, a);
+        }
+
+        /// <summary>
         /// Generates a completely random RGB color string (ex: "#ff7700") that
         /// is centered around an input color, varying up to half the input variance.
         /// </summary>
-        /// <returns></returns>
         public string ColorString(float red, float green, float blue, float variance)
         {
             if (red < 0 || red > 1f || green < 0 || green > 1f || blue < 0 || blue > 1f)
@@ -453,7 +415,7 @@ namespace RandomNumbers
         /// </summary>
         public T Object<T>() where T : class, new()
         {
-            T output = new T();
+            T output = new();
 
             foreach (var property_info in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
@@ -467,7 +429,12 @@ namespace RandomNumbers
                 if (property_type.IsGenericType && property_type.GetGenericTypeDefinition() == typeof(Nullable<>))
                     property_name = Nullable.GetUnderlyingType(property_type).ToString();
 
-                object output_value = new object();
+                if (property_type.IsEnum)
+                {
+                    // todo: this is a hack. Need to figure out how to get the type of the enum?
+                }
+
+                var output_value = new object();
 
                 switch (property_name)
                 {
@@ -546,21 +513,7 @@ namespace RandomNumbers
                         break;
 
                     default:
-                        //if (property_type.IsEnum)
-                        //{
-                        //    //Type enum_type = property_info.PropertyType;
-
-                        //    MethodInfo method = typeof(RandomGenerator).GetMethod("EnumValue");
-                        //    MethodInfo generic = method.MakeGenericMethod(myType);
-                        //    output_value = generic.Invoke(this, null);
-
-                        //    output_value = EnumValue<enum_type>();
-                        //}
-                        //else
-                        //{
                         throw new Exception($"Column {property_name} has an unknown data type: {property_type}.");
-                        //}
-                        //break;
                 }
 
                 property_info.SetValue(property_name, output_value, null);
@@ -727,34 +680,32 @@ namespace RandomNumbers
 
         #region Time
 
-        protected DateTime RandomTime()
+        public DateTime RandomTime()
         {
             int hour = _Random.Next(0, 23);
             int mins = _Random.Next(0, 59);
             int secs = _Random.Next(0, 59);
 
-            DateTime now = DateTime.Now;
+            var now = DateTime.Now;
 
             return new DateTime(now.Year, now.Month, now.Day, hour, mins, secs);
         }
 
         public DateTime RandomDateTime()
         {
-            long ticks = this.Long(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks);
+            long ticks = Long(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks);
             return new DateTime(ticks, DateTimeKind.Utc);
         }
 
-        protected DateTime RandomDateTime(DateTime min, DateTime max)
+        public DateTime RandomDateTime(DateTime min, DateTime max)
         {
-            if (min > max)
-            {
-                // oopsie doodle! someone got their dates all kerfuffled!
-                DateTime temp = max;
-                max = min;
-                min = temp;
-            }
+            long ticks;
 
-            long ticks = Long(min.Ticks, max.Ticks);
+            if (min < max)
+                ticks = Long(min.Ticks, max.Ticks);
+            else
+                ticks = Long(max.Ticks, min.Ticks);
+
             return new DateTime(ticks, DateTimeKind.Local);
         }
 
