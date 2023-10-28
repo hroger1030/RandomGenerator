@@ -24,7 +24,24 @@ using System.Text;
 
 namespace RandomNumbers
 {
-    public partial class WeightedTable<T>
+    public interface IWeightedTable<T>
+    {
+        List<KeyValuePair<T, float>> TableList { get; }
+
+        int TotalEnties { get; }
+        float TotalWeight { get; }
+
+        void AddEntry(T item, double weight);
+        void AddEntry(T item, float weight);
+        void AddEntry(T item, int weight);
+        List<KeyValuePair<string, string>> ConvertToPercentileTable(eDiceType tableScale);
+        void Reset();
+        T SelectRandomItem(bool removeSelectedItem = false);
+        void SortTable();
+        string ToString();
+    }
+
+    public partial class WeightedTable<T> : IWeightedTable<T>
     {
         protected static Random _Random;
         protected List<KeyValuePair<T, float>> _TableList;
@@ -135,13 +152,13 @@ namespace RandomNumbers
         /// <summary>
         /// Converts the table to a percentile table.
         /// </summary>
-        public List<KeyValuePair<string,string>> ConvertToPercentileTable(eDiceType tableScale)
+        public List<KeyValuePair<string, string>> ConvertToPercentileTable(eDiceType tableScale)
         {
             SortTable();
 
             var output = new List<KeyValuePair<string, string>>();
             int lowerBound = 1;
-            int upperBound; 
+            int upperBound;
             string range;
 
             // check total count against table scale.
@@ -163,7 +180,7 @@ namespace RandomNumbers
                 else
                     range = $"{lowerBound} - {upperBound}";
 
-                var newKvp = new KeyValuePair<string, string>(range, kvp.Key.ToString() + $" raw({currentDelta})" );
+                var newKvp = new KeyValuePair<string, string>(range, kvp.Key.ToString() + $" raw({currentDelta})");
                 output.Add(newKvp);
                 lowerBound += roundedDelta;
             }
