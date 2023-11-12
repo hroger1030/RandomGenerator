@@ -30,15 +30,17 @@ namespace RandomNumbers.Dice
 
         public DiceFormula() { }
 
-        public DiceFormula(eDiceType dice_type, int rolls, int bonus, int multiplier)
+        public DiceFormula(eDiceType diceType, int rolls, int bonus, int multiplier)
         {
+            // bounus can be any value, no checks needed.
+
             if (rolls < 1)
-                throw new ArgumentException("rolls cannot be less than 1");
+                throw new ArgumentOutOfRangeException(nameof(rolls), "rolls cannot be less than 1");
 
             if (multiplier < 1)
-                throw new ArgumentException("multiplier cannot be less than 1");
+                throw new ArgumentOutOfRangeException(nameof(bonus), "multiplier cannot be less than 1");
 
-            DiceType = dice_type;
+            DiceType = diceType;
             Rolls = rolls;
             Bonus = bonus;
             Multiplier = multiplier;
@@ -51,7 +53,7 @@ namespace RandomNumbers.Dice
         public DiceFormula(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
-                throw new ArgumentException("Input cannot be null or empty");
+                throw new ArgumentNullException(nameof(input));
 
             Reset();
 
@@ -125,7 +127,7 @@ namespace RandomNumbers.Dice
         {
             var sb = new StringBuilder();
 
-            sb.Append(Rolls.ToString());
+            sb.Append(Rolls);
             sb.Append(DiceType.ToString());
 
             if (Bonus > 0)
@@ -144,7 +146,7 @@ namespace RandomNumbers.Dice
             if (obj == null)
                 return false;
 
-            if (this.GetType() != obj.GetType())
+            if (GetType() != obj.GetType())
                 return false;
 
             DiceFormula other = (DiceFormula)obj;
@@ -168,7 +170,7 @@ namespace RandomNumbers.Dice
         {
             unchecked
             {
-                return (DiceType.GetHashCode() * 17) ^ (Rolls * 5023) ^ (Bonus * 2647) ^ (Multiplier * 641);
+                return DiceType.GetHashCode() ^ (Rolls << 8) ^ (Bonus << 16) ^ (Multiplier << 24);
             }
         }
     }
