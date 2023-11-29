@@ -78,15 +78,16 @@ namespace RandomNumbers
 
         DateTime RandomDateTime();
 
-        string Sentence(int max_string_length);
+        string Sentence(int sentenceLength);
 
         short Short();
         short Short(short max);
         short Short(short min, short max);
 
         string String(int length);
-        string String(int length, string character_set);
-        string String(int min_length, int max_length);
+        string String(int length, string characterSet);
+        string String(int minLength, int maxLength);
+        string TextContent(int wordCount, string[] wordList);
 
         ulong ULong();
 

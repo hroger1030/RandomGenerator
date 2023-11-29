@@ -18,7 +18,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -27,8 +26,8 @@ namespace RandomNumbers
 {
     public class RandomGenerator : IRandomGenerator
     {
-        private const int _Precision = 1000000000;
-        private const string ASCII_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        public const int ARTIFICIAL_FLOAT_PRECISION = 1000000000;
+        public const string ASCII_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
         private static Random _Random = new();
 
@@ -233,7 +232,7 @@ namespace RandomNumbers
         /// </summary>
         public double UnitInterval()
         {
-            return (_Random.Next(0, _Precision + 1)) / ((double)_Precision);
+            return (_Random.Next(0, ARTIFICIAL_FLOAT_PRECISION + 1)) / ((double)ARTIFICIAL_FLOAT_PRECISION);
         }
 
         /// <summary>
@@ -278,7 +277,7 @@ namespace RandomNumbers
 
         public string String(int length, string characterSet)
         {
-            char[] output = new char[length];
+            var output = new char[length];
 
             for (int i = 0; i < length; i++)
                 output[i] = characterSet[Int(characterSet.Length - 1)];
@@ -286,26 +285,48 @@ namespace RandomNumbers
             return new string(output);
         }
 
-        public string Sentence(int maxStringLength)
+        public string Sentence(int sentenceLength)
         {
-            if (maxStringLength < 1)
+            if (sentenceLength < 1)
                 throw new ArgumentException("Max string length cannot be less than 2");
 
-            var output = new StringBuilder(maxStringLength);
-            int remaining_characters = maxStringLength;
+            var output = new StringBuilder(sentenceLength);
+            int remainingCharacters = sentenceLength;
             string buffer;
 
-            while (remaining_characters > 10)
+            while (remainingCharacters > 10)
             {
-                buffer = String(1, 7) + " ";
+                buffer = String(1, 7);
                 output.Append(buffer);
+                output.Append(' ');
 
-                remaining_characters -= (buffer.Length);
+                remainingCharacters -= (buffer.Length + 1);
             }
 
-            output.Append(String(1, remaining_characters - 1) + ".");
+            output.Append(String(1, remainingCharacters - 1));
+            output.Append('.');
 
             return output.ToString();
+        }
+
+        public string TextContent(int wordCount, string[] wordList)
+        {
+            if (wordCount < 1)
+                throw new ArgumentException(nameof(wordCount), "Max string length cannot be less than 1");
+
+            if (wordList == null || wordList.Length == 0)
+                throw new ArgumentNullException(nameof(wordList));
+
+            var sb = new StringBuilder();
+
+            for (int i = 0; i <= wordCount; i++)
+            {
+                sb.Append(' ');
+                sb.Append(wordList[_Random.Next(wordList.Length - 1)]);
+            }
+
+            sb.Append('.');
+            return sb.ToString();
         }
 
         /// <summary>
@@ -354,12 +375,12 @@ namespace RandomNumbers
             return string.Format("#{0:X2}{1:X2}{2:X2}", (byte)(red * 255), (byte)(green * 255), (byte)(blue * 255));
         }
 
-        private float Clamp(float value)
+        public float Clamp(float value)
         {
             return Clamp(value, 0, 1);
         }
 
-        private float Clamp(float value, float min, float max)
+        public float Clamp(float value, float min, float max)
         {
             return (value < min) ? min : (value > max) ? max : value;
         }
