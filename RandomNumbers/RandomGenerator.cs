@@ -47,7 +47,7 @@ namespace RandomNumbers
 
         public bool Bool()
         {
-            return _Random.Next(0, 1) == 1;
+            return _Random.Next(0, 2) == 1;
         }
 
         public byte Byte()
@@ -110,7 +110,7 @@ namespace RandomNumbers
         }
 
         /// <summary>
-        /// Returns a random value between min and max parameters, inclusive.
+        /// Returns a random value between min and max parameters.
         /// </summary>
         /// <param name="min">The lower bound of the range, inclusive</param>
         /// <param name="max">The upper bound of the range, exclusive</param>
@@ -228,7 +228,7 @@ namespace RandomNumbers
         #region math & geometry
 
         /// <summary>
-        /// Returns a random value between 0 and 1, inclusive
+        /// Returns a random value between 0 and 1, inclusive.
         /// </summary>
         public double UnitInterval()
         {
@@ -236,11 +236,11 @@ namespace RandomNumbers
         }
 
         /// <summary>
-        /// Returns a value between 0 and 2pi - epsilon, inclusive.
+        /// Returns a value between 0 and 2pi, exclusive.
         /// </summary>
         public float Facing()
         {
-            return (float)Double(0, ((2 * Math.PI - float.Epsilon)));
+            return (float)Double(0, (2 * Math.PI));
         }
 
         #endregion
