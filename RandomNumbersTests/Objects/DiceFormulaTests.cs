@@ -44,7 +44,7 @@ namespace RandomNumbersTests
         [TestCase(-1)]
         public void DiceFormula_Ctor_BadRolls(int rolls)
         {
-            Assert.Throws<ArgumentException>(() => new DiceFormula(eDiceType.D2, rolls, 2, 3));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new DiceFormula(eDiceType.D2, rolls, 2, 3));
         }
 
         [Test]
@@ -53,7 +53,7 @@ namespace RandomNumbersTests
         [TestCase(-1)]
         public void DiceFormula_Ctor_BadMultiplier(int multiplier)
         {
-            Assert.Throws<ArgumentException>(() => new DiceFormula(eDiceType.D2, 1, 2, multiplier));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new DiceFormula(eDiceType.D2, 1, 2, multiplier));
         }
 
         [Test]

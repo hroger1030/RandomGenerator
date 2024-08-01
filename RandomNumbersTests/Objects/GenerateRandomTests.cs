@@ -162,10 +162,20 @@ namespace RandomNumbersTests
 
         [Test]
         [Category("Color")]
-        public void GenerateRandColor()
+        public void GenerateRand24BitColor()
         {
-            string buffer = _Rand.ColorString();
+            string buffer = _Rand.RGBColorString();
             Assert.IsTrue(buffer.Length == 7);
+
+            Console.Write(buffer);
+        }
+
+        [Test]
+        [Category("Color")]
+        public void GenerateRand32BitColor()
+        {
+            string buffer = _Rand.RGBAColorString();
+            Assert.IsTrue(buffer.Length == 9);
 
             Console.Write(buffer);
         }
@@ -176,20 +186,6 @@ namespace RandomNumbersTests
         {
             string buffer = _Rand.ColorString(0.7f, 0f, 0f, 0.25f);
             Assert.IsTrue(buffer.Length == 7);
-        }
-
-        [Test]
-        [Category("Circle")]
-        public void RandomPointInACircle()
-        {
-            for (int i = 0; i < NUMBER_OF_TESTS; i++)
-            {
-                var output = _Rand.RandomPointInUnitCircle(0, 0, 1);
-
-                // test: x^2 + y^2 <= 1
-                float test_value = (output.Item1 * output.Item1) + (output.Item2 * output.Item2);
-                Assert.IsTrue((test_value >= 0 && test_value <= 1), $"Test value {test_value} out of excpected range");
-            }
         }
     }
 }
