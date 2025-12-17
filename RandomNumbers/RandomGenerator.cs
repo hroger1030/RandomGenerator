@@ -1,4 +1,4 @@
-/*
+﻿/*
 The MIT License (MIT)
 
 Copyright (c) 2010 Roger Hill
@@ -26,44 +26,54 @@ namespace RandomNumbers
 {
     public class RandomGenerator : IRandomGenerator
     {
-        public const int ARTIFICIAL_FLOAT_PRECISION = 1000000000;
         public const string ASCII_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-        private static Random _Random = new();
+        private Random _Rand = new();
 
         public RandomGenerator() { }
 
-        /// <summary>
-        /// This constructor exists for testing purposes. Passing a
-        /// number in here will ensure that you get the same set of
-        /// reandom numbers each time it is initialized.
-        /// </summary>
         public RandomGenerator(int seed)
         {
-            _Random = new Random(seed);
+            _Rand = new Random(seed);
         }
 
         #region basic types
 
         public bool Bool()
         {
-            return _Random.Next(0, 2) == 1;
+            return _Rand.Next(2) == 1;
         }
 
+        /////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// Returns a random value between [0, 255).
+        /// </summary>
         public byte Byte()
         {
-            return (byte)Int(0, byte.MaxValue);
+            return (byte)_Rand.Next(byte.MinValue, byte.MaxValue + 1);
         }
 
+        /// <summary>
+        /// Returns a random value between [0, max).
+        /// </summary>
+        /// <param name="max">The upper bound of the range, exclusive</param>
         public byte Byte(byte max)
         {
-            return (byte)Int(0, max);
+            return Byte(byte.MinValue, max);
         }
 
+        /// <summary>
+        /// Returns a random value between [min, max).
+        /// </summary>
+        /// <param name="min">The lower bound of the range, inclusive</param>
+        /// <param name="max">The upper bound of the range, exclusive</param>
         public byte Byte(byte min, byte max)
         {
-            return (byte)Int(min, max);
+            return (byte)_Rand.Next(min, max + 1);
         }
+
+        /////////////////////////////////////////////////////////
 
         public byte[] ByteArray(int count)
         {
@@ -71,42 +81,66 @@ namespace RandomNumbers
                 throw new ArgumentException($"Cannot generate {count} bytes, it is less than 1");
 
             byte[] output = new byte[count];
-            _Random.NextBytes(output);
+            _Rand.NextBytes(output);
+
             return output;
         }
 
+        /////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// Returns a random value between [0, 65535).
+        /// </summary>
         public char Char()
         {
-            return (char)Int(char.MinValue, char.MaxValue);
-        }
-
-        public char Char(char max)
-        {
-            return (char)Int(0, char.MaxValue);
-        }
-
-        public char Char(char min, char max)
-        {
-            return (char)Int(min, max);
+            return (char)_Rand.Next(char.MinValue, char.MaxValue + 1);
         }
 
         /// <summary>
-        /// Returns a random value between 0 and 1, exclusive.
+        /// Returns a random value between [0, max).
+        /// </summary>
+        /// <param name="max">The upper bound of the range, exclusive</param>
+        public char Char(char max)
+        {
+            return (char)_Rand.Next(char.MinValue, max + 1);
+        }
+
+        /// <summary>
+        /// Returns a random value between [min, max).
+        /// </summary>
+        /// <param name="min">The lower bound of the range, inclusive</param>
+        /// <param name="max">The upper bound of the range, exclusive</param>
+        public char Char(char min, char max)
+        {
+            return (char)_Rand.Next(min, max + 1);
+        }
+
+        /////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// Returns a random value between [0, 1).
         /// </summary>
         public double Double()
         {
-            byte[] buffer = new byte[sizeof(double)];
-            _Random.NextBytes(buffer);
-            return BitConverter.ToDouble(buffer, 0);
+            return _Rand.NextDouble();
         }
 
         /// <summary>
-        /// Returns a random value between 0 and max parameters, inclusive.
+        /// Returns a random value between [0, max).
         /// </summary>
         /// <param name="max">The upper bound of the range, exclusive</param>
         public double Double(double max)
         {
-            return _Random.NextDouble() * max;
+            if (double.IsNaN(max))
+                throw new ArgumentOutOfRangeException("max cannot be NaN");
+
+            if (double.IsInfinity(max))
+                throw new ArgumentOutOfRangeException(nameof(max), "max cannot be infinity");
+
+            if (max < 0)
+                throw new ArgumentOutOfRangeException(nameof(max), "max must be > 0");
+
+            return _Rand.NextDouble() * max;
         }
 
         /// <summary>
@@ -116,111 +150,177 @@ namespace RandomNumbers
         /// <param name="max">The upper bound of the range, exclusive</param>
         public double Double(double min, double max)
         {
-            return (_Random.NextDouble() * (max - min)) + min;
+            if (double.IsNaN(min))
+                throw new ArgumentException("min cannot be NaN");
+
+            if (double.IsNaN(max))
+                throw new ArgumentOutOfRangeException("max cannot be NaN");
+
+            if (double.IsInfinity(min))
+                throw new ArgumentOutOfRangeException(nameof(max), "min cannot be infinity");
+
+            if (double.IsInfinity(max))
+                throw new ArgumentOutOfRangeException(nameof(max), "max cannot be infinity");
+
+            if (max < min)
+                throw new ArgumentOutOfRangeException(nameof(max), "max must be >= min.");
+
+            return (_Rand.NextDouble() * (max - min)) + min;
         }
 
+        /////////////////////////////////////////////////////////
+
         /// <summary>
-        /// Returns a random value between 0 and 1, exclusive.
+        /// Returns a random value between [0, 1).
         /// </summary>
         public float Float()
         {
-            return (float)_Random.NextDouble();
+            return _Rand.NextSingle();
         }
 
         /// <summary>
-        /// Returns a random value between 0 and max parameters, exclusive.
+        /// Returns a random value between [0, max).
         /// </summary>
         /// <param name="max">The upper bound of the range, exclusive</param>
         public float Float(float max)
         {
-            return (float)(_Random.NextDouble() * max);
+            if (float.IsNaN(max))
+                throw new ArgumentException("max cannot be NaN");
+
+            if (float.IsInfinity(max))
+                throw new ArgumentOutOfRangeException(nameof(max), "max cannot be infinity");
+
+            if (max < 0)
+                throw new ArgumentOutOfRangeException(nameof(max), "max must be >= 0");
+
+            return _Rand.NextSingle() * max;
         }
 
         /// <summary>
-        /// Returns a random value between min and max parameters, exclusive.
+        /// Returns a random value between [min,max).
         /// </summary>
         /// <param name="min">The lower bound of the range, inclusive</param>
         /// <param name="max">The upper bound of the range, exclusive</param>
         public float Float(float min, float max)
         {
-            return (float)((_Random.NextDouble() * (max - min)) + min);
+            if (float.IsNaN(min))
+                throw new ArgumentException("min cannot be NaN");
+
+            if (float.IsNaN(max))
+                throw new ArgumentException("max cannot be NaN");
+
+            if (float.IsInfinity(min))
+                throw new ArgumentOutOfRangeException(nameof(max), "min cannot be infinity");
+
+            if (float.IsInfinity(max))
+                throw new ArgumentOutOfRangeException(nameof(max), "max cannot be infinity");
+
+            if (max < min)
+                throw new ArgumentOutOfRangeException(nameof(max), "max must be >= min.");
+
+            return ((_Rand.NextSingle() * (max - min)) + min);
         }
 
+        /////////////////////////////////////////////////////////
+
         /// <summary>
-        /// Returns a random value between int min and int max, inclusive
+        /// Returns a random value between [min, int.MaxValue).
         /// </summary>
         public int Int()
         {
-            return _Random.Next(int.MinValue, int.MaxValue);
+            return _Rand.Next();
         }
 
         /// <summary>
-        /// Returns a random value between 0 and max, inclusive
+        /// Returns a random value between [0, max).
         /// </summary>
-        /// <param name="max">The upper bound of the range, inclusive</param>
+        /// <param name="max">The upper bound of the range, exclusive</param>
         public int Int(int max)
         {
-            return _Random.Next(0, max + 1);
+            return _Rand.Next(0, max);
         }
 
         /// <summary>
-        /// Returns a random value between min and max parameters, inclusive.
+        /// Returns a random value between [min, max).
         /// </summary>
         /// <param name="min">The lower bound of the range, inclusive</param>
-        /// <param name="max">The upper bound of the range, inclusive</param>
+        /// <param name="max">The upper bound of the range, exclusive</param>
         public int Int(int min, int max)
         {
-            return _Random.Next(min, max + 1);
+            if (max < min)
+                throw new ArgumentOutOfRangeException(nameof(max), "max must be >= min.");
+
+            return _Rand.Next(min, max);
         }
 
+        /////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// Returns a random value between [0, long.MaxValue).
+        /// </summary>
         public long Long()
         {
-            byte[] buf = new byte[8];
-            _Random.NextBytes(buf);
-            return (long)BitConverter.ToUInt64(buf, 0);
+            return _Rand.NextInt64();
         }
 
+        /// <summary>
+        /// Returns a random value between [0, max).
+        /// </summary>
+        /// <param name="max">The upper bound of the range, exclusive</param>
         public long Long(long max)
         {
-            return Long(0, max);
+            return _Rand.NextInt64(max);
         }
 
+        /// <summary>
+        /// Returns a random value between [min, max).
+        /// </summary>
+        /// <param name="min">The lower bound of the range, inclusive</param>
+        /// <param name="max">The upper bound of the range, exclusive</param>
         public long Long(long min, long max)
         {
-            //Working with ulong so that modulo works correctly with values > long.MaxValue
-            ulong uRange = (ulong)(max - min);
-
-            ulong ulongRand;
-            do
-            {
-                byte[] buf = new byte[8];
-                _Random.NextBytes(buf);
-                ulongRand = (ulong)BitConverter.ToInt64(buf, 0);
-            } while (ulongRand > ulong.MaxValue - ((ulong.MaxValue % uRange) + 1) % uRange);
-
-            return (long)(ulongRand % uRange) + min;
+            return _Rand.NextInt64(min, max);
         }
 
+        /////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// Returns a random value between [0, short.MaxValue).
+        /// </summary>
         public short Short()
         {
-            return (short)Int(short.MinValue, short.MaxValue);
+            return (short)_Rand.Next(short.MinValue, short.MaxValue + 1);
         }
 
+        /// <summary>
+        /// Returns a random value between [0, max).
+        /// </summary>
+        /// <param name="max">The upper bound of the range, exclusive</param>
         public short Short(short max)
         {
-            return (short)Int(0, max);
+            return (short)_Rand.Next(short.MinValue, max + 1);
         }
 
+        /// <summary>
+        /// Returns a random value between [min, max).
+        /// </summary>
+        /// <param name="min">The lower bound of the range, inclusive</param>
+        /// <param name="max">The upper bound of the range, exclusive</param>
         public short Short(short min, short max)
         {
-            return (short)Int(min, max);
+            return (short)_Rand.Next(min, max + 1);
         }
 
+        /////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// Returns a random value between [0, ulong.MaxValue).
+        /// </summary>
         public ulong ULong()
         {
-            byte[] buf = new byte[8];
-            _Random.NextBytes(buf);
-            return BitConverter.ToUInt64(buf, 0);
+            Span<byte> buffer = stackalloc byte[8];
+            _Rand.NextBytes(buffer);
+            return BitConverter.ToUInt64(buffer);
         }
 
         #endregion
@@ -228,19 +328,33 @@ namespace RandomNumbers
         #region math & geometry
 
         /// <summary>
-        /// Returns a random value between 0 and 1, inclusive.
+        /// Returns a random float value between [0,1].
         /// </summary>
-        public double UnitInterval()
+        public float UnitFloat()
         {
-            return (_Random.Next(0, ARTIFICIAL_FLOAT_PRECISION + 1)) / ((double)ARTIFICIAL_FLOAT_PRECISION);
+            Span<byte> buffer = stackalloc byte[4];
+            _Rand.NextBytes(buffer);
+            var randVal = BitConverter.ToUInt32(buffer);
+            return randVal / (float)long.MaxValue;
         }
 
         /// <summary>
-        /// Returns a value between 0 and 2pi, exclusive.
+        /// Returns a random double value between [0,1].
+        /// </summary>
+        public double UnitDouble()
+        {
+            Span<byte> buffer = stackalloc byte[8];
+            _Rand.NextBytes(buffer);
+            var randVal = BitConverter.ToUInt64(buffer);
+            return randVal / (double)long.MaxValue;
+        }
+
+        /// <summary>
+        /// Returns a value between [0,2pi).
         /// </summary>
         public float Facing()
         {
-            return (float)Double(0, (2 * Math.PI));
+            return (float)(_Rand.NextSingle() * Math.Tau);
         }
 
         #endregion
@@ -248,20 +362,39 @@ namespace RandomNumbers
         #region strings
 
         /// <summary>
-        /// Generates a string of N length populated with unicode characters.
+        /// Generates a string of N length populated with random unicode characters.
         /// </summary>
         public string UnicodeString(int length)
         {
-            byte[] buffer = new byte[length * 2];
+            char[] buffer = new char[length * 2]; // Worst-case: all supplementary characters take 2 chars each
+            int charPos = 0;     // position in char array
+            int charsAdded = 0;  // counts actual number of characters
 
-            for (int i = 0; i < length * 2; i += 2)
+            for (int i = 0; i < length; i++)
             {
-                int chr = _Random.Next(0xD7FF);
-                buffer[i] = (byte)(chr & 0xFF);
-                buffer[i + 1] = (byte)((chr & 0xFF00) >> 8);
+                int codePoint;
+
+                // Generate code points in two ranges to skip surrogates efficiently
+                // 0x0000–0xD7FF and 0xE000–0x10FFFF
+                if (_Rand.NextDouble() < 0.844) // roughly proportional sizes: 0xD800 / 0x110000
+                {
+                    codePoint = _Rand.Next(0xD800);
+                    buffer[charPos++] = (char)codePoint;
+                }
+                else
+                {
+                    codePoint = 0xE000 + _Rand.Next(0x10FFFF - 0xE000 + 1);
+
+                    // Supplementary character → surrogate pair
+                    codePoint -= 0x10000;
+                    buffer[charPos++] = (char)((codePoint >> 10) + 0xD800);
+                    buffer[charPos++] = (char)((codePoint & 0x3FF) + 0xDC00);
+                }
+
+                charsAdded++;
             }
 
-            return Encoding.Unicode.GetString(buffer);
+            return new string(buffer, 0, charPos);
         }
 
         public string String(int length)
@@ -322,7 +455,7 @@ namespace RandomNumbers
             for (int i = 0; i <= wordCount; i++)
             {
                 sb.Append(' ');
-                sb.Append(wordList[_Random.Next(wordList.Length - 1)]);
+                sb.Append(wordList[_Rand.Next(wordList.Length - 1)]);
             }
 
             sb.Append('.');
@@ -338,7 +471,7 @@ namespace RandomNumbers
             byte g = Byte();
             byte b = Byte();
 
-            return string.Format("#{0:X2}{1:X2}{2:X2}", r, g, b);
+            return $"#{r:X2}{g:X2}{b:X2}";
         }
 
         /// <summary>
@@ -351,7 +484,7 @@ namespace RandomNumbers
             byte b = Byte();
             byte a = Byte();
 
-            return string.Format("#{0:X2}{1:X2}{2:X2}{3:X2}", r, g, b, a);
+            return $"#{r:X2}{g:X2}{b:X2}{a:X2}";
         }
 
         /// <summary>
@@ -368,21 +501,23 @@ namespace RandomNumbers
 
             float delta = variance / 2;
 
-            red = Clamp(red + Float(-delta, delta));
-            green = Clamp(green + Float(-delta, delta));
-            blue = Clamp(blue + Float(-delta, delta));
+            red = UnitRangeClamp(red + Float(-delta, delta));
+            green = UnitRangeClamp(green + Float(-delta, delta));
+            blue = UnitRangeClamp(blue + Float(-delta, delta));
 
-            return string.Format("#{0:X2}{1:X2}{2:X2}", (byte)(red * 255), (byte)(green * 255), (byte)(blue * 255));
+            var bRed = (byte)(red * 255);
+            var bGreen = (byte)(green * 255);
+            var bBlue = (byte)(blue * 255);
+
+            return $"#{bRed:X2}{bGreen:X2}{bBlue:X2}";
         }
 
-        public float Clamp(float value)
+        /// <summary>
+        /// Clamps a value between [0,1]
+        /// </summary>
+        public float UnitRangeClamp(float value)
         {
-            return Clamp(value, 0, 1);
-        }
-
-        public float Clamp(float value, float min, float max)
-        {
-            return (value < min) ? min : (value > max) ? max : value;
+            return (value < 0) ? 0 : (value > 1) ? 1 : value;
         }
 
         #endregion
@@ -408,17 +543,17 @@ namespace RandomNumbers
 
         public V DictionaryValue<K, V>(IDictionary<K, V> dictionary, bool remove)
         {
-            int element_number = _Random.Next(0, dictionary.Count);
+            int elementNumber = _Rand.Next(0, dictionary.Count);
 
             if (remove)
             {
-                V value = dictionary.ElementAt(element_number).Value;
-                dictionary.Remove(dictionary.ElementAt(element_number).Key);
+                V value = dictionary.ElementAt(elementNumber).Value;
+                dictionary.Remove(dictionary.ElementAt(elementNumber).Key);
                 return value;
             }
             else
             {
-                return dictionary.ElementAt(element_number).Value;
+                return dictionary.ElementAt(elementNumber).Value;
             }
         }
 
@@ -428,7 +563,7 @@ namespace RandomNumbers
         public T EnumValue<T>() where T : struct, IConvertible
         {
             Array buffer = Enum.GetValues(typeof(T));
-            return (T)buffer.GetValue(_Random.Next(buffer.Length));
+            return (T)buffer.GetValue(_Rand.Next(buffer.Length));
         }
 
         /// <summary>
@@ -438,106 +573,104 @@ namespace RandomNumbers
         {
             T output = new();
 
-            foreach (var property_info in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+            foreach (var propInfo in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
-                if (!property_info.CanWrite)
+                if (!propInfo.CanWrite)
                     continue;
 
-                Type property_type = property_info.PropertyType;
-                string property_name = property_info.PropertyType.FullName; // change to .Name? shorter
+                Type propType = propInfo.PropertyType;
+                string propName = propInfo.PropertyType.FullName; // change to .Name? shorter
 
                 // in the event that we are looking at a nullable type, we need to look at the underlying type.
-                if (property_type.IsGenericType && property_type.GetGenericTypeDefinition() == typeof(Nullable<>))
-                    property_name = Nullable.GetUnderlyingType(property_type).ToString();
+                if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    propName = Nullable.GetUnderlyingType(propType).ToString();
 
-                if (property_type.IsEnum)
+                if (propType.IsEnum)
                 {
                     // todo: this is a hack. Need to figure out how to get the type of the enum?
                 }
 
-                var output_value = new object();
+                object outputValue;
 
-                switch (property_name)
+                switch (propName)
                 {
                     case "System.Int32":
-                        output_value = Int();
+                        outputValue = Int();
                         break;
 
                     case "System.String":
-                        output_value = String(10);
+                        outputValue = String(10);
                         break;
 
                     case "System.Double":
-                        output_value = Double();
+                        outputValue = Double();
                         break;
 
                     case "System.Float":
-                        output_value = Float();
+                        outputValue = Float();
                         break;
 
                     case "System.Boolean":
-                        output_value = Bool();
+                        outputValue = Bool();
                         break;
 
                     case "System.DateTime":
-                        output_value = RandomDateTime();
+                        outputValue = RandomDateTime();
                         break;
 
                     case "System.Guid":
-                        output_value = Guid.NewGuid();
+                        outputValue = Guid.NewGuid();
                         break;
 
                     case "System.Single":
-                        output_value = Float();
+                        outputValue = Float();
                         break;
 
                     case "System.Decimal":
-                        output_value = (decimal)Double();
+                        outputValue = (decimal)Double();
                         break;
 
                     case "System.Byte":
-                        output_value = Byte();
+                        outputValue = Byte();
                         break;
 
                     case "System.Byte[]":
-                        byte[] buffer = new byte[Int(1, 10)];
-                        _Random.NextBytes(buffer);
-                        output_value = buffer;
+                        outputValue = ByteArray(Int(1, 10));
                         break;
 
                     case "System.Char":
-                        output_value = Char();
+                        outputValue = Char();
                         break;
 
                     case "System.UInt32":
-                        output_value = (uint)Int();
+                        outputValue = (uint)Int();
                         break;
 
                     case "System.Int64":
-                        output_value = (long)((ulong)(Int() << 32) | (ulong)Int());
+                        outputValue = Long();
                         break;
 
                     case "System.UInt64":
-                        output_value = (ulong)(Int() << 32) | (ulong)Int();
+                        outputValue = ULong();
                         break;
 
                     case "System.Object":
-                        output_value = new object();
+                        outputValue = new object();
                         break;
 
                     case "System.Int16":
-                        output_value = (short)Char();
+                        outputValue = Short();
                         break;
 
                     case "System.UInt16":
-                        output_value = (ushort)Char();
+                        outputValue = (ushort)Short();
                         break;
 
                     default:
-                        throw new Exception($"Column {property_name} has an unknown data type: {property_type}.");
+                        throw new Exception($"Column {propName} has an unknown data type: {propType}.");
                 }
 
-                property_info.SetValue(property_name, output_value, null);
+                propInfo.SetValue(propName, outputValue, null);
             }
 
             return output;
@@ -559,21 +692,25 @@ namespace RandomNumbers
         }
 
         /// <summary>
-        /// Generates a random value in the specified range that is distributed normally.
+        /// Generates a random value in the specified range that is distributed normally, 
+        /// using an Irwin-Hall approximation.
         /// </summary>
         /// <param name="lowerBound">inclusive lowest value</param>
         /// <param name="upperBound">inclusive highest value</param>
-        /// <param name="rolls">the number of normally distruibuted random factors that contribute
+        /// <param name="rolls">the number of normally distributed random factors that contribute
         /// to the final value. Greater values will push the average towards the mean.</param>
         public double NormallyDistributedDouble(double lowerBound, double upperBound, int rolls)
         {
-            double lower_roll_bound = lowerBound / rolls;
-            double upper_roll_bound = upperBound / rolls;
+            if (rolls < 1)
+                throw new ArgumentOutOfRangeException(nameof(rolls));
+
+            double lowerRollBound = lowerBound / rolls;
+            double upperRollBound = upperBound / rolls;
             double sum = 0.0;
 
             while (rolls > 0)
             {
-                sum += Double(lower_roll_bound, upper_roll_bound);
+                sum += this.Double(lowerRollBound, upperRollBound);
                 rolls--;
             }
 
@@ -584,7 +721,7 @@ namespace RandomNumbers
         /// Generates a random value between 0 and the upper bound that is distributed normally.
         /// </summary>
         /// <param name="upperBound">inclusive highest value</param>
-        /// <param name="rolls">the number of normally distruibuted random factors that contribute
+        /// <param name="rolls">the number of normally distributed random factors that contribute
         /// to the final value. Greater values will push the average towards the mean.</param>
         public float NormallyDistributedFloat(float upperBound, int rolls)
         {
@@ -596,7 +733,7 @@ namespace RandomNumbers
         /// </summary>
         /// <param name="lowerBound">inclusive lowest value</param>
         /// <param name="upperBound">inclusive highest value</param>
-        /// <param name="rolls">the number of normally distruibuted random factors that contribute
+        /// <param name="rolls">the number of normally distributed random factors that contribute
         /// to the final value. Greater values will push the average towards the mean.</param>
         public float NormallyDistributedFloat(float lowerBound, float upperBound, int rolls)
         {
@@ -607,7 +744,7 @@ namespace RandomNumbers
         /// Generates a random value between 0 and the upper bound that is distributed normally.
         /// </summary>
         /// <param name="upperBound">inclusive highest value</param>
-        /// <param name="rolls">the number of normally distruibuted random factors that contribute
+        /// <param name="rolls">the number of normally distributed random factors that contribute
         /// to the final value. Greater values will push the average towards the mean.</param>
         public int NormallyDistributedInt(int upperBound, int rolls)
         {
@@ -619,7 +756,7 @@ namespace RandomNumbers
         /// </summary>
         /// <param name="lowerBound">inclusive lowest value</param>
         /// <param name="upperBound">inclusive highest value</param>
-        /// <param name="rolls">the number of normally distruibuted random factors that contribute
+        /// <param name="rolls">the number of normally distributed random factors that contribute
         /// to the final value. Greater values will push the average towards the mean.</param>
         public int NormallyDistributedInt(int lowerBound, int upperBound, int rolls)
         {
@@ -633,11 +770,27 @@ namespace RandomNumbers
         {
             // based off of article:
             // http://blogs.msdn.com/b/ericlippert/archive/2012/02/21/generating-random-non-uniform-data-in-c.aspx
-            // turns out the intregral of a Uniform Distribution is a stretched Arctan function. Who knew?
+            // turns out the integral of a Uniform Distribution is a stretched Arctan function. Who knew?
             //p --> peak + scale * tan(pi * (p - 0.5))
-            double result = (peak + scale) * Math.Tan(Math.PI * (_Random.NextDouble() - 0.5));
+            double result = (peak + scale) * Math.Tan(Math.PI * (_Rand.NextDouble() - 0.5));
 
             return result;
+        }
+
+        /// <summary>
+        /// Generates a true normally distributed (Gaussian) random value using the Box–Muller 
+        ///  transform, centered on the specified mean with the given standard deviation.
+        /// </summary>
+        /// <param name="mean"></param>
+        /// <param name="standardDeviation"></param>
+        /// <returns></returns>
+        public double GaussianNormalDistribution(double mean, double standardDeviation)
+        {
+            double u1 = 1.0 - _Rand.NextDouble();
+            double u2 = 1.0 - _Rand.NextDouble();
+
+            double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
+            return mean + standardDeviation * randStdNormal;
         }
 
         /// <summary>
@@ -648,7 +801,7 @@ namespace RandomNumbers
         {
             // generate a random number between 1 and 10 inclusive
             // we use log10, so log10(1) = 0, log10(10) = 1
-            double random_number = (_Random.NextDouble() * 9) + 1;
+            double random_number = (_Rand.NextDouble() * 9) + 1;
 
             // get log of random value.
             double output = Math.Log10(random_number);
@@ -671,7 +824,7 @@ namespace RandomNumbers
 
             // generate a random number between 1 and X inclusive
             // we use logX, so logX(1) = 0, logX(X) = 1
-            double random_number = (_Random.NextDouble() * (logBase - 1)) + 1;
+            double random_number = (_Rand.NextDouble() * (logBase - 1)) + 1;
 
             // get log of random value using specified base.
             double output = Math.Log(random_number, logBase);
@@ -703,9 +856,9 @@ namespace RandomNumbers
 
         public DateTime RandomTime()
         {
-            int hour = _Random.Next(0, 23);
-            int mins = _Random.Next(0, 59);
-            int secs = _Random.Next(0, 59);
+            int hour = _Rand.Next(0, 23);
+            int mins = _Rand.Next(0, 59);
+            int secs = _Rand.Next(0, 59);
 
             var now = DateTime.Now;
 
@@ -714,7 +867,7 @@ namespace RandomNumbers
 
         public DateTime RandomDateTime()
         {
-            long ticks = Long(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks);
+            long ticks = _Rand.NextInt64(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks);
             return new DateTime(ticks, DateTimeKind.Utc);
         }
 

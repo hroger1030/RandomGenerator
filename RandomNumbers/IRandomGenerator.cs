@@ -24,77 +24,59 @@ namespace RandomNumbers
     public interface IRandomGenerator
     {
         bool Bool();
-
         byte Byte();
         byte Byte(byte max);
         byte Byte(byte min, byte max);
         byte[] ByteArray(int count);
-
         char Char();
         char Char(char max);
         char Char(char min, char max);
-
         T CollectionValue<T>(IList<T> collection, bool remove);
-
-        string RGBColorString();
-        string RGBAColorString();
         string ColorString(float red, float green, float blue, float variance);
-
         V DictionaryValue<K, V>(IDictionary<K, V> dictionary, bool remove);
-
         double Double();
         double Double(double max);
         double Double(double min, double max);
-
         T EnumValue<T>() where T : struct, IConvertible;
-
         double ExponentiallyDistributedDouble();
         double ExponentiallyDistributedDouble(double logBase);
         double ExponentiallyDistributedDouble(double logBase, double min, double max);
-
         float Facing();
-
         float Float();
         float Float(float max);
         float Float(float min, float max);
-
+        double GaussianNormalDistribution(double mean, double standardDeviation);
         int Int();
         int Int(int max);
         int Int(int min, int max);
-
         long Long();
         long Long(long max);
         long Long(long min, long max);
-
-        double NormallyDistributedDouble(double upperBound, int rolls);
         double NormallyDistributedDouble(double lowerBound, double upperBound, int rolls);
-        float NormallyDistributedFloat(float upperBound, int rolls);
+        double NormallyDistributedDouble(double upperBound, int rolls);
         float NormallyDistributedFloat(float lowerBound, float upperBound, int rolls);
-
+        float NormallyDistributedFloat(float upperBound, int rolls);
         int NormallyDistributedInt(int upperBound, int rolls);
         int NormallyDistributedInt(int lowerBound, int upperBound, int rolls);
-
         T Object<T>() where T : class, new();
-
         DateTime RandomDateTime();
-
+        DateTime RandomDateTime(DateTime min, DateTime max);
+        DateTime RandomTime();
+        string RGBAColorString();
+        string RGBColorString();
         string Sentence(int sentenceLength);
-
         short Short();
         short Short(short max);
         short Short(short min, short max);
-
         string String(int length);
-        string String(int length, string characterSet);
         string String(int minLength, int maxLength);
+        string String(int length, string characterSet);
         string TextContent(int wordCount, string[] wordList);
-
         ulong ULong();
-
         string UnicodeString(int length);
-
         double UniformDistributedDouble(double peak, double scale);
-
-        double UnitInterval();
+        double UnitDouble();
+        float UnitFloat();
+        float UnitRangeClamp(float value);
     }
 }

@@ -23,7 +23,7 @@ namespace RandomNumbers.Dice
 {
     public class DiceFormula
     {
-        public eDiceType DiceType { get; set; } = eDiceType.D20;
+        public eDiceType DiceType { get; set; } = eDiceType.D6;
         public int Rolls { get; set; } = 1;
         public int Bonus { get; set; } = 0;
         public int Multiplier { get; set; } = 1;
@@ -32,7 +32,7 @@ namespace RandomNumbers.Dice
 
         public DiceFormula(eDiceType diceType, int rolls, int bonus, int multiplier)
         {
-            // bounus can be any value, no checks needed.
+            // bonus can be any value, no checks needed.
 
             if (rolls < 1)
                 throw new ArgumentOutOfRangeException(nameof(rolls), "rolls cannot be less than 1");
@@ -168,10 +168,7 @@ namespace RandomNumbers.Dice
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return DiceType.GetHashCode() ^ (Rolls << 8) ^ (Bonus << 16) ^ (Multiplier << 24);
-            }
+            return HashCode.Combine(DiceType, Rolls, Bonus, Multiplier);
         }
     }
 }

@@ -24,11 +24,9 @@ namespace RandomNumbers
 {
     public static class CollectionRandomizer
     {
-        private readonly static Random _Random = new();
-
         /// <summary>
-        /// Fast randomizer that sorts collection in place. by swaping
-        /// each item with a randomitem that has not been swapped yet.
+        /// Fast randomizer that sorts collection in place. by swapping
+        /// each item with a random item that has not been swapped yet.
         /// </summary>
         public static IList<T> ShuffleList<T>(this IList<T> list)
         {
@@ -38,7 +36,7 @@ namespace RandomNumbers
             while (n > 1)
             {
                 n--;
-                int k = _Random.Next(n + 1);
+                int k = Random.Shared.Next(n + 1);
                 value = list[k];
                 list[k] = list[n];
                 list[n] = value;
@@ -48,19 +46,18 @@ namespace RandomNumbers
         }
 
         /// <summary>
-        /// Shuffle Algorithim using crypto RNG for true randomness
+        /// Shuffle Algorithm using crypto RNG for true randomness
         /// </summary>
         public static IList<T> CryptoShuffleList<T>(this IList<T> list)
         {
-            var provider = RandomNumberGenerator.Create();
             int n = list.Count;
             T value;
 
             while (n > 1)
             {
-                byte[] box = new byte[1];
+                var box = new byte[1];
 
-                do provider.GetBytes(box);
+                do RandomNumberGenerator.Fill(box);
                 while (!(box[0] < n * (byte.MaxValue / n)));
 
                 int k = (box[0] % n);

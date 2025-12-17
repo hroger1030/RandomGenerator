@@ -23,27 +23,10 @@ using System.Linq;
 using System.Text;
 
 namespace RandomNumbers
-{
-    public interface IWeightedTable<T>
-    {
-        List<KeyValuePair<T, float>> TableList { get; }
-
-        int TotalEnties { get; }
-        float TotalWeight { get; }
-
-        void AddEntry(T item, double weight);
-        void AddEntry(T item, float weight);
-        void AddEntry(T item, int weight);
-        List<KeyValuePair<string, string>> ConvertToPercentileTable(eDiceType tableScale);
-        void Reset();
-        T SelectRandomItem(bool removeSelectedItem = false);
-        void SortTable();
-        string ToString();
-    }
-
+{ 
     public partial class WeightedTable<T> : IWeightedTable<T>
     {
-        protected static Random _Random;
+        protected static Random _Rand;
         protected List<KeyValuePair<T, float>> _TableList;
         protected float _TotalWeight;
         protected bool _Sorted;
@@ -73,7 +56,7 @@ namespace RandomNumbers
 
         public WeightedTable(IEnumerable<KeyValuePair<T, float>> items)
         {
-            _Random = new Random();
+            _Rand = new Random();
             _TableList = new List<KeyValuePair<T, float>>();
             _TotalWeight = 0;
             _Sorted = false;
@@ -119,7 +102,7 @@ namespace RandomNumbers
             SortTable();
 
             int selected_index = -1;
-            float random_roll = (float)_Random.NextDouble() * _TotalWeight;
+            float random_roll = (float)_Rand.NextDouble() * _TotalWeight;
 
             for (int i = 0; i < _TableList.Count; i++)
             {
