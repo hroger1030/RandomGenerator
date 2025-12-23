@@ -210,7 +210,7 @@ namespace RandomNumbers
                 throw new ArgumentException("max cannot be NaN");
 
             if (float.IsInfinity(min))
-                throw new ArgumentOutOfRangeException(nameof(max), "min cannot be infinity");
+                throw new ArgumentOutOfRangeException(nameof(min), "min cannot be infinity");
 
             if (float.IsInfinity(max))
                 throw new ArgumentOutOfRangeException(nameof(max), "max cannot be infinity");
