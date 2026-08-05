@@ -7,10 +7,10 @@ so it's easy to discover what's available and to unit test each piece in isolati
 
 ## Solution layout
 
-| Project | Description |
-|---|---|
-| [RandomNumbers](RandomNumbers) | The library itself. Namespace: `RandomNumbers` (dice types live in the `RandomNumbers.Dice` sub-namespace). |
-| [RandomNumbersTests](RandomNumbersTests) | NUnit test suite for the library. |
+| Project                                  | Description                                                                                                 |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [RandomNumbers](RandomNumbers)           | The library itself. Namespace: `RandomNumbers` (dice types live in the `RandomNumbers.Dice` sub-namespace). |
+| [RandomNumbersTests](RandomNumbersTests) | NUnit test suite for the library.                                                                           |
 
 ## File tree
 
@@ -159,7 +159,7 @@ deck.CryptoShuffleList(); // crypto RNG-backed shuffle
 
 This project is licensed under the [MIT License](LICENSE.txt).
 
-In short: yoiu can do anything you want with these files, short of removing the license or claiming them as your own. 
+In short: you can do anything you want with these files, short of removing the license or claiming them as your own.
 Go crazy with them.
 
 See [LICENSE.txt](LICENSE.txt) for the full, legally-binding text.
