@@ -81,13 +81,10 @@ namespace RandomNumbersTests
         [Test]
         [Category("DiceFormula")]
         [TestCase("1D6", eDiceType.D6, 1, 0, 1)]
-        [TestCase("1D6", eDiceType.D6, 1, 0, 1)]
-        [TestCase("1D6", eDiceType.D6, 1, 0, 1)]
         [TestCase("4D6", eDiceType.D6, 4, 0, 1)]
         [TestCase("1D20+4", eDiceType.D20, 1, 4, 1)]
         [TestCase("3D6-1", eDiceType.D6, 3, -1, 1)]
         [TestCase("1D6-1", eDiceType.D6, 1, -1, 1)]
-        [TestCase("1D6x2", eDiceType.D6, 1, 0, 2)]
         [TestCase("1D6x2", eDiceType.D6, 1, 0, 2)]
         [TestCase("1D6+1x2", eDiceType.D6, 1, 1, 2)]
         public void DiceFormula_ToString_Success(string expectedOutput, eDiceType expectedDiceType, int expectedRolls, int expectedBonus, int expectedMultiplier)
@@ -96,6 +93,54 @@ namespace RandomNumbersTests
             var buffer = formula.ToString();
 
             Assert.IsTrue(buffer == expectedOutput);
+        }
+
+        [Test]
+        [Category("DiceFormula")]
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("   ")]
+        public void DiceFormula_CtorStringInput_ThrowsForNullOrWhitespace(string input)
+        {
+            Assert.Throws<ArgumentNullException>(() => new DiceFormula(input));
+        }
+
+        [Test]
+        [Category("DiceFormula")]
+        public void DiceFormula_CtorStringInput_ThrowsForUnknownDiceType()
+        {
+            Assert.Throws<ArgumentException>(() => new DiceFormula("3d7"));
+        }
+
+        [Test]
+        [Category("DiceFormula")]
+        public void DiceFormula_Equals_SameValuesAreEqual()
+        {
+            var a = new DiceFormula(eDiceType.D6, 3, 2, 1);
+            var b = new DiceFormula(eDiceType.D6, 3, 2, 1);
+
+            Assert.IsTrue(a.Equals(b));
+            Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
+        }
+
+        [Test]
+        [Category("DiceFormula")]
+        public void DiceFormula_Equals_DifferentValuesAreNotEqual()
+        {
+            var a = new DiceFormula(eDiceType.D6, 3, 2, 1);
+            var b = new DiceFormula(eDiceType.D6, 4, 2, 1);
+
+            Assert.IsFalse(a.Equals(b));
+        }
+
+        [Test]
+        [Category("DiceFormula")]
+        public void DiceFormula_Equals_NullOrDifferentTypeIsNotEqual()
+        {
+            var a = new DiceFormula(eDiceType.D6, 3, 2, 1);
+
+            Assert.IsFalse(a.Equals(null));
+            Assert.IsFalse(a.Equals("not a dice formula"));
         }
     }
 }

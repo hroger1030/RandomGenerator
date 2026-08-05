@@ -298,7 +298,7 @@ namespace RandomNumbers
         /// <param name="max">The upper bound of the range, exclusive</param>
         public short Short(short max)
         {
-            return (short)_Rand.Next(short.MinValue, max + 1);
+            return (short)_Rand.Next(0, max + 1);
         }
 
         /// <summary>
@@ -335,7 +335,7 @@ namespace RandomNumbers
             Span<byte> buffer = stackalloc byte[4];
             _Rand.NextBytes(buffer);
             var randVal = BitConverter.ToUInt32(buffer);
-            return randVal / (float)long.MaxValue;
+            return randVal / (float)uint.MaxValue;
         }
 
         /// <summary>
@@ -346,7 +346,7 @@ namespace RandomNumbers
             Span<byte> buffer = stackalloc byte[8];
             _Rand.NextBytes(buffer);
             var randVal = BitConverter.ToUInt64(buffer);
-            return randVal / (double)long.MaxValue;
+            return randVal / (double)ulong.MaxValue;
         }
 
         /// <summary>
@@ -670,7 +670,7 @@ namespace RandomNumbers
                         throw new Exception($"Column {propName} has an unknown data type: {propType}.");
                 }
 
-                propInfo.SetValue(propName, outputValue, null);
+                propInfo.SetValue(output, outputValue, null);
             }
 
             return output;

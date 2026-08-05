@@ -129,7 +129,7 @@ namespace RandomNumbers.Dice
         {
             return diceType switch
             {
-                eDiceType.D2 => 0.5f,
+                eDiceType.D2 => 1.5f,
                 eDiceType.D3 => 2.0f,
                 eDiceType.D4 => 2.5f,
                 eDiceType.D6 => 3.5f,
@@ -140,6 +140,7 @@ namespace RandomNumbers.Dice
                 eDiceType.D30 => 15.5f,
                 eDiceType.D100 => 50.5f,
                 eDiceType.D1000 => 500.5f,
+                eDiceType.D10000 => 5000.5f,
                 _ => throw new Exception("Unknown eDiceType value " + diceType.ToString()),
             };
         }
